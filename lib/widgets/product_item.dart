@@ -27,7 +27,7 @@ class ProductItem extends StatelessWidget {
           leading: IconButton(
             // icon: Icon(Icons.favorite),
             icon: Icon(
-                product.isFavorite ? Icons.favorite_border : Icons.favorite),
+                product.isFavorite ? Icons.favorite : Icons.favorite_border),
             onPressed: () {
               product.toggleFavoriteStatus();
             },
