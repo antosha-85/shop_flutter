@@ -21,7 +21,11 @@ class Cart with ChangeNotifier {
   }
 
   int get itemCount {
-    return _items.length;
+    var sum = 0;
+    for (var value in _items.values) {
+      sum += value.quantity;
+    }
+    return sum;
   }
 
   void addItem(String productId, String title, double price) {
@@ -32,7 +36,7 @@ class Cart with ChangeNotifier {
               id: existingCartItem.id,
               title: existingCartItem.title,
               price: existingCartItem.price,
-              quantity: existingCartItem.quantity++));
+              quantity: ++existingCartItem.quantity));
     } else {
       _items.putIfAbsent(
           productId,
