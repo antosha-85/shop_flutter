@@ -36,11 +36,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if (_imageUrlController.text.isEmpty ||
+          !_imageUrlController.text.startsWith('http') ||
+          !_imageUrlController.text.startsWith('https') ||
+          !_imageUrlController.text.endsWith('.png') ||
+          !_imageUrlController.text.endsWith('.jpg') ||
+          !_imageUrlController.text.endsWith('.jpeg')) {
+        return;
+      }
       setState(() {});
     }
   }
 
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
+      return;
+    }
     _form.currentState.save();
     print(_editedProduct.title);
     print(_editedProduct.description);
@@ -63,7 +75,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
@@ -75,6 +89,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
                       id: null);
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please provide a value';
+                  }
+                  return null;
                 },
               ),
               TextFormField(
@@ -93,6 +113,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       imageUrl: _editedProduct.imageUrl,
                       id: null);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a value!';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number!';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Please enter a positive number!';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
@@ -106,6 +138,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       description: value,
                       imageUrl: _editedProduct.imageUrl,
                       id: null);
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please provide a description';
+                  }
+                  if (value.length > 10) {
+                    return null;
+                  } else {
+                    return 'Please enter at least 10 characters';
+                  }
                 },
               ),
               Row(
@@ -140,6 +182,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             description: _editedProduct.description,
                             imageUrl: value,
                             id: null);
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please provide a link to the image';
+                        }
+                        if (!value.startsWith('http') ||
+                            !value.startsWith('https') ||
+                            !value.endsWith('.png') ||
+                            !value.endsWith('.jpg') ||
+                            !value.endsWith('.jpeg')) {
+                          return 'Please enter a valid link to the image';
+                        }
+                        return null;
                       },
                       onFieldSubmitted: (_) => _saveForm(),
                     ),
